@@ -213,7 +213,7 @@ class ControlMarker(Node):
         self.joint_state_send.header.stamp = self.get_clock().now().to_msg()
 
         angles = self.mycobot.get_radians()
-        self.get_logger().info('[' + ', '.join(map(str, angles)) + ']')
+        self.get_logger().info('{}'.format(angles))
         if angles:
             data_list = []
             for index, value in enumerate(angles):
