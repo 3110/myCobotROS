@@ -43,17 +43,17 @@ class ControlMarker(Node):
             coords = [0,0,0,0,0,0]
             self.get_logger().info('error [101]: can not get coord values')
         # initial position
-        position = Point(coords[1] / -1000, coords[0] / 1000, coords[2] / 1000)
-        orientation = Quaternion(0, 0, 0, 1)
+        position = Point(x=coords[1] / -1000, y=coords[0] / 1000, z=coords[2] / 1000)
+        orientation = Quaternion(w=0.0, x=0.0, y=0.0, z=1.0)
         self.make6DofMarker(True, InteractiveMarkerControl.NONE, 
                     position, orientation, True)
         self.server.applyChanges()
 
         # pub joint state
-        joint_state_send = JointState()
-        joint_state_send.header = Header()
+        self.joint_state_send = JointState()
+        self.joint_state_send.header = Header()
 
-        joint_state_send.name = [
+        self.joint_state_send.name = [
                                 'joint2_to_joint1', 
                                 'joint3_to_joint2', 
                                 'joint4_to_joint3', 
@@ -61,8 +61,8 @@ class ControlMarker(Node):
                                 'joint6_to_joint5', 
                                 'joint6output_to_joint6'
                                 ]
-        joint_state_send.velocity = [0]
-        joint_state_send.effort = []
+        self.joint_state_send.velocity = [0.0]
+        self.joint_state_send.effort = []
 
         marker_ = Marker()
         marker_.header.frame_id = '/joint1'
@@ -139,10 +139,10 @@ class ControlMarker(Node):
 
         if show_6dof: 
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 1
-            control.orientation.y = 0
-            control.orientation.z = 0
+            control.orientation.w = 1.0
+            control.orientation.x = 1.0
+            control.orientation.y = 0.0
+            control.orientation.z = 0.0
             control.name = "rotate_x"
             control.interaction_mode = InteractiveMarkerControl.ROTATE_AXIS
             if fixed:
@@ -150,10 +150,10 @@ class ControlMarker(Node):
             int_marker.controls.append(control)
 
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 1
-            control.orientation.y = 0
-            control.orientation.z = 0
+            control.orientation.w = 1.0
+            control.orientation.x = 1.0
+            control.orientation.y = 0.0
+            control.orientation.z = 0.0
             control.name = "move_x"
             control.interaction_mode = InteractiveMarkerControl.MOVE_AXIS
             if fixed:
@@ -161,10 +161,10 @@ class ControlMarker(Node):
             int_marker.controls.append(control)
         
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 0
-            control.orientation.y = 1
-            control.orientation.z = 0
+            control.orientation.w = 1.0
+            control.orientation.x = 0.0
+            control.orientation.y = 1.0
+            control.orientation.z = 0.0
             control.name = "rotate_z"
             control.interaction_mode = InteractiveMarkerControl.ROTATE_AXIS
             if fixed:
@@ -172,10 +172,10 @@ class ControlMarker(Node):
             int_marker.controls.append(control)
 
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 0
-            control.orientation.y = 1
-            control.orientation.z = 0
+            control.orientation.w = 1.0
+            control.orientation.x = 0.0
+            control.orientation.y = 1.0
+            control.orientation.z = 0.0
             control.name = "move_z"
             control.interaction_mode = InteractiveMarkerControl.MOVE_AXIS
             if fixed:
@@ -183,10 +183,10 @@ class ControlMarker(Node):
             int_marker.controls.append(control)
 
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 0
-            control.orientation.y = 0
-            control.orientation.z = 1
+            control.orientation.w = 1.0
+            control.orientation.x = 0.0
+            control.orientation.y = 0.0
+            control.orientation.z = 1.0
             control.name = "rotate_y"
             control.interaction_mode = InteractiveMarkerControl.ROTATE_AXIS
             if fixed:
@@ -194,17 +194,17 @@ class ControlMarker(Node):
             int_marker.controls.append(control)
 
             control = InteractiveMarkerControl()
-            control.orientation.w = 1
-            control.orientation.x = 0
-            control.orientation.y = 0
-            control.orientation.z = 1
+            control.orientation.w = 1.0
+            control.orientation.x = 0.0
+            control.orientation.y = 0.0
+            control.orientation.z = 1.0
             control.name = "move_y"
             control.interaction_mode = InteractiveMarkerControl.MOVE_AXIS
             if fixed:
                 control.orientation_mode = InteractiveMarkerControl.FIXED
             int_marker.controls.append(control)
 
-        self.server.insert(int_marker, self.processFeedback)
+        self.server.insert(int_marker, feedback_callback=self.processFeedback)
         self.menu_handler.apply( self.server, int_marker.name )
 
     # marker box finish
@@ -213,7 +213,7 @@ class ControlMarker(Node):
         self.joint_state_send.header.stamp = self.get_clock().now().to_msg()
 
         angles = self.mycobot.get_radians()
-        self.get_logger().info(angles)
+        self.get_logger().info('[' + ', '.join(map(str, angles)) + ']')
         if angles:
             data_list = []
             for index, value in enumerate(angles):
