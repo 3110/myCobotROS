@@ -33,12 +33,13 @@ setup(
     entry_points={
         'console_scripts': [
             'control_marker= scripts.control_marker:main',
-            'control_slider= control_slider:main',
+            'control_slider= scripts.control_slider:main',
             'display= scripts.display:main',
         ],
     },
     data_files=[
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name), glob('urdf/*'))
+        (os.path.join('share', package_name), glob('urdf/*')),
+        (os.path.join('config', package_name), glob('config/*'))
     ]
 )
