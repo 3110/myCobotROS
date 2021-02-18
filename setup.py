@@ -40,6 +40,6 @@ setup(
     data_files=[
         (os.path.join('share', package_name), glob('launch/*.launch.py')),
         (os.path.join('share', package_name), glob('urdf/*')),
-        (os.path.join('config', package_name), glob('config/*'))
+        (os.path.join('share', package_name), glob('config/*'))
     ]
 )
