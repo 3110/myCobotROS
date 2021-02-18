@@ -35,7 +35,7 @@ class ControlMarker(Node):
         coords = self.mycobot.get_coords()
 
         # crate a timer to update the pushlished transforms
-        self.server = InteractiveMarkerServer('mycobot_controller')
+        self.server = InteractiveMarkerServer(self, 'mycobot_controller')
         self.menu_handler.insert('First Entry', callback=self.processFeedback)
         self.menu_handler.insert('Second Entry', callback=self.processFeedback)
 
